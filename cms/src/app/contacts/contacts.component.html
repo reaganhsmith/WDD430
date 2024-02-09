@@ -1,11 +1,13 @@
 <div class="row">
-    <app-contact-list class="col-md-5 col-md-offset-1"
-    (contactWasSelected)="selectedContact = $event"></app-contact-list>
-    <app-contact-detail class="col-md-4 col-md-offset-1" 
-    *ngIf="selectedContact; else infoText"
-    [contact]="selectedContact"></app-contact-detail>
-    <ng-template #infoText>
-        <p>Please select a contact</p>
-    </ng-template>
-</div>
-
+    <div class="col-md-5">
+      <app-contact-list></app-contact-list>
+    </div>
+    <div class="col-md-7">
+      <app-contact-detail
+        *ngIf="selectedContact; else infoText"
+        [recipe]="selectedContact"></app-contact-detail>
+      <ng-template #infoText>
+        <p>Please select a Contact!</p>
+      </ng-template>
+    </div>
+  </div>
