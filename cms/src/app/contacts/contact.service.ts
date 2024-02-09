@@ -26,7 +26,5 @@ export class ContactService {
     }
     return null;
   }
-  onSelectedContact(contact: Contact){
-    this.contactSelectedEvent.emit(contact);
-  }
+
 }

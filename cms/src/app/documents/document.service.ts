@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable, Output } from '@angular/core';
 import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
+import { Document } from './document.model';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class DocumentService {
-
+  @Output() documentSelectedEvent = new EventEmitter<Document>();
   documents: Document[] = [];
 
   constructor() {
@@ -17,12 +18,14 @@ export class DocumentService {
     return this.documents.slice();
   }
 
-  // getContact(id: string): Document | null {
-  //   for (const document of this.documents) {
-  //     if (document.id == id) {
-  //             return document;
-  //     }
-  //   }
-  //   return null;
-  // }
+  getDocument(id: string): Document | null{
+    for (const document of this.documents){
+      if(document.id === id){
+        return document;
+      }
+    }
+    return null;
+  }
+
+  
 }
