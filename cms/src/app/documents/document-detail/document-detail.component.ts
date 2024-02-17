@@ -43,4 +43,8 @@ export class DocumentDetailComponent implements OnInit {
 
   }
 
+  onDelete(){
+    this.documentService.deleteDocument(this.document);
+    this.router.navigate(['/documents']);
+  }
 }
