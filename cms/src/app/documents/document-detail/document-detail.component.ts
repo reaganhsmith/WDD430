@@ -1,20 +1,25 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Document } from '../document.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { WindRefService } from '../../wind-ref.service';
 
 @Component({
   selector: 'app-document-detail',
   templateUrl: './document-detail.component.html',
-  styleUrl: './document-detail.component.css'
+  styleUrls: ['./document-detail.component.css'] 
 })
-export class DocumentDetailComponent {
-  @Input() document: Document;
+export class DocumentDetailComponent implements OnInit {
+  nativeWindow: any;
+  document: Document;
 
-  constructor(private route: ActivatedRoute,
-    private router: Router){}
+  constructor(
+    private windowRefService: WindRefService
+  ) {}
 
-  onEditDocument(){
-    this.router.navigate(['edit'], {relativeTo: this.route})
+  ngOnInit(): void {
+    this.nativeWindow = this.windowRefService.getNativeWindow();
+  }
+
+  onView() {
   }
 
 }
