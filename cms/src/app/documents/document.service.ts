@@ -18,13 +18,8 @@ export class DocumentService {
     return this.documents.slice();
   }
 
-  getDocument(id: string): Document | null{
-    for (const document of this.documents){
-      if(document.id === id){
-        return document;
-      }
-    }
-    return null;
+  getDocument(id: string){
+    return this.documents[id];
   }
 
   
