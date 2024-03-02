@@ -52,7 +52,7 @@ export class ContactService implements OnInit {
     this.contacts.push(newContact);
     this.contactsListClone = this.contacts.slice();
 
-    this.contactChangedEvent.next(this.contactsListClone)
+    this.contactListChangedEvent.next(this.contactsListClone)
   }
 
   updateContact(originalContact: Contact, newContact: Contact){
@@ -67,7 +67,7 @@ export class ContactService implements OnInit {
     newContact.id = originalContact.id
     this.contacts[pos] = newContact
     this.contactsListClone = this.contacts.slice();
-    this.contactChangedEvent.next(this.contactsListClone)
+    this.contactListChangedEvent.next(this.contactsListClone)
     
   }
 
