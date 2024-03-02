@@ -30,7 +30,7 @@ export class DocumentDetailComponent implements OnInit {
         (params: Params) => {
           
           this.id = params['id'];
-          console.log(this.id)
+          
           this.document = this.documentService.getDocument(this.id); 
         }
       );
