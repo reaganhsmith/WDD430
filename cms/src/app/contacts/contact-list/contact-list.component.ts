@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Contact } from '../contact.model';
 import { ContactService } from '../contact.service';
+import { ContactsFilterPipe } from '../contacts-filter.pipe';
 
 @Component({
   selector: 'app-contact-list',
@@ -11,6 +12,7 @@ import { ContactService } from '../contact.service';
 export class ContactListComponent implements OnInit{
   contacts: Contact[];
   subscription: Subscription;
+  term: string;
 
 
   constructor(private contactService: ContactService){
@@ -36,5 +38,10 @@ export class ContactListComponent implements OnInit{
   ngOnDestroy(){
     this.subscription.unsubscribe();
   }
+
+  search(value: string){
+    this.term = value;
+  }
+
   
 }
