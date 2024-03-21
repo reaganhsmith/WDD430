@@ -5,15 +5,27 @@ var http = require('http');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose');
 
 // import the routing file to handle the default (index) route
+// ... ADD CODE TO IMPORT YOUR ROUTING FILES HERE ... 
 var index = require('./server/routes/app');
 const messageRoutes = require('./server/routes/messages');
 const documentsRoutes = require('./server/routes/documents');
 const contactRoutes = require('./server/routes/contacts');
 
 
-// ... ADD CODE TO IMPORT YOUR ROUTING FILES HERE ... 
+
+mongoose.connect('mongodb+srv://reagansmith:ByuiCSE341@cluster0.ufsf3y0.mongodb.net/cms')
+    .then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch((err) => {
+        console.error('Error connecting to MongoDB:', err);
+    });
+
+
+
 
 var app = express(); // create an instance of express
 
