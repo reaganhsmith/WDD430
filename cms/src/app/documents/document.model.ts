@@ -3,7 +3,7 @@ export class Document {
     public name: string;
     public description: string;
     public url: string;
-  public _id: any;
+    public _id: any;
 
 
     constructor(id: string, name: string, description: string, url: string, public children?: Document[]){

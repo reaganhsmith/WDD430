@@ -85,8 +85,7 @@ export class DocumentService {
             this.documents.push(res.document);
             this.sortDocuments();
           }
-        }
-        )
+        })
   }
 
 
@@ -126,13 +125,13 @@ export class DocumentService {
     }
 
     this.httpClient.delete(`${this.documentsUrl}/${document.id}`)
-    .subscribe(
-      (response: Response) =>{
-      this.documents.splice(pos, 1);
-      this.sortDocuments();
-      }
-    )
-    
+      .subscribe(
+        (response: Response) => {
+          this.documents.splice(pos, 1);
+          this.sortDocuments();
+        }
+      )
+
   }
 
 

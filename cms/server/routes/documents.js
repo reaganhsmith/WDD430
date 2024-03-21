@@ -75,7 +75,7 @@ router.put('/:id', (req, res, next) => {
 });
 
 
-router.put('/:id', (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
 
   const docId = req.params.id;
 

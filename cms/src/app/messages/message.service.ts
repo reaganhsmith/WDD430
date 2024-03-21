@@ -11,16 +11,16 @@ export class MessageService {
   messages: Message[] = [];
   @Output() messageChangedEvent = new EventEmitter<Message[]>();
   messageListChangedEvent = new Subject<Message[]>();
-  fireBaseUrl = "https://wdd430-f6314-default-rtdb.firebaseio.com/messages.json";
+  messagesUrl = "http://localhost:3000/messages";
   maxMessageId: number;
 
   constructor(private httpClient: HttpClient) {
     this.messages = MOCKMESSAGES;
   }
 
-  getMessages(){
+  getMessages(): Message[] {
     this.httpClient
-      .get<Message[]>(this.fireBaseUrl)
+      .get<Message[]>(this.messagesUrl)
       .subscribe((messages: Message[]) => {
         this.messages = messages;
         this.maxMessageId = this.getMaxId();
@@ -31,40 +31,48 @@ export class MessageService {
     return this.messages.slice();
   }
 
-  private sortMessages(){
+  private sortMessages() {
     this.messages.sort((a, b) => a.msgText.localeCompare(b.msgText));
   }
 
-  storeMessages(){
+  storeMessages() {
     this.httpClient
-    .put(this.fireBaseUrl, JSON.stringify(this.messages), {
-      headers: new HttpHeaders().set('Content-Type', 'application/json'),
-    })
-    .subscribe(() =>{
-      this.sortMessages;
-      this.messageChangedEvent.next(this.messages.slice());
-    }); 
+      .put(this.messagesUrl, JSON.stringify(this.messages), {
+        headers: new HttpHeaders().set('Content-Type', 'application/json'),
+      })
+      .subscribe(() => {
+        this.sortMessages;
+        this.messageChangedEvent.next(this.messages.slice());
+      });
   }
 
-  getMessage(id: string): Message | null {
-    for (const message of this.messages){
-      if(message.id === id){
-        return message;
-      }
-    }
-    return null;
+  getMessage(id: string){
+    return this.messages[id];
   }
 
-  addMessage(message: Message){
-    this.messages.push(message);
-    this.storeMessages();
+  addMessage(newMessage: Message) {
+    if (!newMessage) return;
+    newMessage.id = '';
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    this.httpClient
+      .post<{ message: string; messageObject: Message }>(
+        this.messagesUrl,
+        newMessage,
+        { headers: headers }).subscribe({
+          next: (res) => {
+            console.log(res.message);
+            this.messages.push(res.messageObject);
+            this.sortMessages();
+          }
+        })
   }
 
   getMaxId(): number {
     let maxId = 0;
-    for (let message of this.messages){
-      let currentId =+ maxId;
-      if(currentId > maxId){
+    for (let message of this.messages) {
+      let currentId = + maxId;
+      if (currentId > maxId) {
         maxId = currentId;
       }
     }

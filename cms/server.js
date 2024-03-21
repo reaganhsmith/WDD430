@@ -16,7 +16,7 @@ const contactRoutes = require('./server/routes/contacts');
 
 
 
-mongoose.connect('mongodb+srv://reagansmith:ByuiCSE341@cluster0.ufsf3y0.mongodb.net/cms')
+mongoose.connect('mongodb+srv://reagansmith:Abc!123!m@cse341.fc1fsnu.mongodb.net/cms')
     .then(() => {
         console.log('Connected to MongoDB');
     })
