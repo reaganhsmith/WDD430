@@ -12,22 +12,22 @@ export class DocumentService {
   @Output() documentSelectedEvent = new EventEmitter<Document>();
   @Output() documentChangedEvent = new EventEmitter<Document[]>();
   documentListChangedEvent = new Subject<Document[]>();
-  fireBaseUrl = "https://wdd430-f6314-default-rtdb.firebaseio.com/documents.json";
+  documentsUrl = "http://localhost:3000/documents";
 
   documents: Document[] = [];
   maxDocumentId: number;
   documentsListClone: Document[];
-  
 
-  constructor(private httpClient : HttpClient) {
+
+  constructor(private httpClient: HttpClient) {
     this.documents = MOCKDOCUMENTS;
     this.maxDocumentId = this.getMaxId();
   }
 
-  
+
   getDocuments(): Document[] {
     this.httpClient
-      .get<Document[]>(this.fireBaseUrl)
+      .get<Document[]>(this.documentsUrl)
       .subscribe((documents: Document[]) => {
         this.documents = documents;
         this.maxDocumentId = this.getMaxId();
@@ -38,31 +38,31 @@ export class DocumentService {
     return this.documents.slice();
   }
 
-  private sortDocuments(){
+  private sortDocuments() {
     this.documents.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  storeDocuments(){
+  storeDocuments() {
     this.httpClient
-    .put(this.fireBaseUrl, JSON.stringify(this.documents), {
-      headers: new HttpHeaders().set('Content-Type', 'application/json'),
-    })
-    .subscribe(() =>{
-      this.sortDocuments;
-      this.documentListChangedEvent.next(this.documents.slice());
-    }); 
+      .put(this.documentsUrl, JSON.stringify(this.documents), {
+        headers: new HttpHeaders().set('Content-Type', 'application/json'),
+      })
+      .subscribe(() => {
+        this.sortDocuments;
+        this.documentListChangedEvent.next(this.documents.slice());
+      });
   }
 
 
-  getDocument(id: string){
+  getDocument(id: string) {
     return this.documents[id];
   }
 
   getMaxId(): number {
     let maxId = 0;
-    for (let document of this.documents){
-      let currentId =+ maxId;
-      if(currentId > maxId){
+    for (let document of this.documents) {
+      let currentId = + maxId;
+      if (currentId > maxId) {
         maxId = currentId;
       }
     }
@@ -70,43 +70,72 @@ export class DocumentService {
 
   }
 
-  addDocument(newDocument: Document){
-    if (!newDocument){
-      return;
-    }
-    
-    this.maxDocumentId ++;
-    newDocument.id = this.maxDocumentId.toString();
-    this.documents.push(newDocument);
-    this.storeDocuments();
+  addDocument(newDocument: Document) {
+    if (!newDocument) return;
+    newDocument.id = '';
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    this.httpClient
+      .post<{ message: string; document: Document }>(
+        this.documentsUrl,
+        newDocument,
+        { headers: headers }).subscribe({
+          next: (res) => {
+            console.log(res.message);
+            this.documents.push(res.document);
+            this.sortDocuments();
+          }
+        }
+        )
   }
 
-  updateDocument(originalDocument: Document, newDocument: Document){
-    if (!originalDocument || !newDocument){
+
+  updateDocument(originalDocument: Document, newDocument: Document) {
+    if (!originalDocument || !newDocument) {
       return
     }
     const pos = this.documents.indexOf(originalDocument)
-    if (pos < 0 ){
-      return 
+    if (pos < 0) {
+      return
     }
 
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
     newDocument.id = originalDocument.id
-    this.documents[pos] = newDocument
-    this.storeDocuments();
-    
+    newDocument._id = originalDocument._id
+
+    this.httpClient
+      .put(`${this.documentsUrl}/${originalDocument.id}`,
+        newDocument, { headers: headers }).subscribe(
+          (resonse: Response) => {
+            this.documents[pos] = newDocument;
+            this.sortDocuments();
+          }
+        );
   }
 
-  deleteDocument(document: Document){
-    if(!document){
+
+  deleteDocument(document: Document) {
+    if (!document) {
       return;
     }
     const pos = this.documents.indexOf(document);
-    if(pos < 0){
+
+    if (pos < 0) {
       return;
     }
-    this.documents.splice(pos, 1);
-    this.storeDocuments();
+
+    this.httpClient.delete(`${this.documentsUrl}/${document.id}`)
+    .subscribe(
+      (response: Response) =>{
+      this.documents.splice(pos, 1);
+      this.sortDocuments();
+      }
+    )
+    
   }
 
-  
+
+
+
 }

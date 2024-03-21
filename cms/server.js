@@ -8,8 +8,8 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 
 // import the routing file to handle the default (index) route
-// ... ADD CODE TO IMPORT YOUR ROUTING FILES HERE ... 
 var index = require('./server/routes/app');
+// ... ADD CODE TO IMPORT YOUR ROUTING FILES HERE ... 
 const messageRoutes = require('./server/routes/messages');
 const documentsRoutes = require('./server/routes/documents');
 const contactRoutes = require('./server/routes/contacts');
