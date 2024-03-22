@@ -6,7 +6,7 @@ const Document = require('../models/document');
 router.get('/', (req, res, next) => {
   Document.find().then((docs) => {
       res.status(200).json({
-        message: "retrived documents from database!",
+        message: "Retrieved documents from the database!",
         documents: docs
       });
     })
@@ -18,11 +18,10 @@ router.get('/', (req, res, next) => {
     });
 });
 
-
 router.post('/', (req, res, next) => {
   const maxDocumentId = sequenceGenerator.nextId("documents");
 
-  const document = newDocument({
+  const document = new Document({
     id: maxDocumentId,
     name: req.body.name,
     description: req.body.description,
@@ -31,77 +30,75 @@ router.post('/', (req, res, next) => {
   document.save()
     .then(createdDocument => {
       res.status(201).json({
-        message: "document added successfully! YAY",
+        message: "Document added successfully!",
         document: createdDocument
       });
     }).catch(error => {
       res.status(500).json({
-        message: "Error occured. document could not be added.",
+        message: "Error occurred. Document could not be added.",
         error: error
       });
     });
 });
 
 router.put('/:id', (req, res, next) => {
-
   const docId = req.params.id;
 
-  Document.findOne({
-      docId
-    })
+  Document.findOne({ id: docId })
     .then(document => {
+      if (!document) {
+        return res.status(404).json({
+          message: "Document not found."
+        });
+      }
+
       document.name = req.body.name;
       document.description = req.body.description;
       document.url = req.body.url;
 
-      Document.updateOne({
-        docId
-      }, document).then(result => {
-        res.status(204).json({
-          message: "document updated successfully! YAY"
+      document.save()
+        .then(updatedDocument => {
+          res.status(200).json({
+            message: "Document updated successfully!",
+            document: updatedDocument
+          });
         })
-      }).catch(error => {
-        res.status(500).json({
-          message: "Error occured. document could not be updated.",
-          error: error
+        .catch(error => {
+          res.status(500).json({
+            message: "Error occurred. Document could not be updated.",
+            error: error
+          });
         });
-      });
-    }).catch(error => {
+    })
+    .catch(error => {
       res.status(500).json({
-        message: "Error occured. document could not be found.",
+        message: "Error occurred. Document could not be found.",
         error: error
       });
     });
 });
-
 
 router.delete('/:id', (req, res, next) => {
-
   const docId = req.params.id;
 
-  Document.findOne({
-      docId
-    })
-    .then(document => {
-      Document.DeleteOne({
-        docId
-      }).then(result => {
-        res.status(204).json({
-          message: "document deleted successfully! NICE"
-        })
-      }).catch(error => {
-        res.status(500).json({
-          message: "An error occured. document could not be deleted.",
-          error: error
+  Document.findOneAndDelete({ id: docId })
+    .then(result => {
+      if (result) {
+        res.status(200).json({
+          message: "Document deleted successfully!"
         });
-      });
-    }).catch(error => {
+      } else {
+        res.status(404).json({
+          message: "Document not found."
+        });
+      }
+    })
+    .catch(error => {
       res.status(500).json({
-        message: "An error occured. document could not be found.",
+        message: "An error occurred. Document could not be deleted.",
         error: error
       });
     });
 });
-
 
 module.exports = router;
