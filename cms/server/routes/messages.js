@@ -46,27 +46,29 @@ router.post('/', async (req, res, next) => {
 });
   
   
-  router.delete('/:id', (req, res, next) => {
-    const msgId = req.params.id;
-  
-    Message.findOneAndDelete({ id: msgId }) // Changed documentModel to Document
-      .then(result => {
-        if (result) {
-          res.status(200).json({
-            message: "Message deleted successfully!"
+router.delete('/:id', (req, res, next) => {
+  Contact.findOne({ id: req.params.id })
+    .then((contact) => {
+      Contact.deleteOne({ id: req.params.id })
+        .then((result) => {
+          res.status(204).json({
+            message: "Contact deleted successfully",
           });
-        } else {
-          res.status(404).json({
-            message: "Message could not be deleted."
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: "There was a problem deleting the Contact.",
+            error: err,
           });
-        }
-      })
-      .catch(error => {
-        res.status(500).json({
-          message: "An error occurred. Message could not be  found.",
-          error: error
         });
+    })
+    .catch((err) => {
+      res.status(404).json({
+        message: "Contact not found.",
+        error: err,
       });
-  });
+    });
+});
+
   
 module.exports = router; 

@@ -6,7 +6,7 @@ const Contact = require('../models/contact');
 // Route to get all contacts
 router.get('/', async (req, res, next) => {
     try {
-        const contacts = await Contact.find();
+        const contacts = await Contact.find().populate("group");
   
         res.status(200).json(contacts);
     } catch (error) {
@@ -91,24 +91,25 @@ router.get('/', async (req, res, next) => {
 
 
   router.delete('/:id', (req, res, next) => {
-    const contactId = req.params.id;
-  
-    Contact.findOneAndDelete({ id: contactId }) // Changed contactModel to contact
-      .then(result => {
-        if (result) {
-          res.status(200).json({
-            message: "Contact deleted successfully!"
+    Contact.findOne({ id: req.params.id })
+      .then((contact) => {
+        Contact.deleteOne({ id: req.params.id })
+          .then((result) => {
+            res.status(204).json({
+              message: "Contact deleted successfully",
+            });
+          })
+          .catch((err) => {
+            res.status(500).json({
+              message: "There was a problem deleting the Contact.",
+              error: err,
+            });
           });
-        } else {
-          res.status(404).json({
-            message: "Contact could not be deleted."
-          });
-        }
       })
-      .catch(error => {
-        res.status(500).json({
-          message: "An error occurred. Contact could not be  found.",
-          error: error
+      .catch((err) => {
+        res.status(404).json({
+          message: "Contact not found.",
+          error: err,
         });
       });
   });

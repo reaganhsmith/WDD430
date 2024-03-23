@@ -89,28 +89,39 @@ export class DocumentService {
 
 
   updateDocument(originalDocument: Document, newDocument: Document) {
+    // Check if originalDocument or newDocument is missing
     if (!originalDocument || !newDocument) {
-      return
+      return;
     }
-    const pos = this.documents.indexOf(originalDocument)
+
+    // Find the position of the original document in the documents array
+    const pos = this.documents.findIndex(d => d.id === originalDocument.id);
+
+    // If original document not found, return
     if (pos < 0) {
-      return
+      return;
     }
 
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    // Set the id of the new Document to the id of the old Document
+    newDocument.id = originalDocument.id;
+    newDocument._id = originalDocument._id;
 
-    newDocument.id = originalDocument.id
-    newDocument._id = originalDocument._id
+    // Define headers for HTTP request
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
 
-    this.httpClient
-      .put(`${this.documentsUrl}/${originalDocument.id}`,
-        newDocument, { headers: headers }).subscribe(
-          (resonse: Response) => {
-            this.documents[pos] = newDocument;
-            this.sortDocuments();
-          }
-        );
+    // Update database by sending HTTP PUT request
+    this.httpClient.put(`${this.documentsUrl}/${newDocument.id}`,
+      newDocument, { headers: headers })
+      .subscribe(
+        (response: Response) => {
+          // If update successful, update local documents array
+          this.documents[pos] = newDocument;
+          // Sort and send documents
+          this.sortDocuments();
+        }
+      );
   }
+
 
 
   deleteDocument(document: Document) {

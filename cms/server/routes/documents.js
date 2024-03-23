@@ -47,60 +47,56 @@ router.post('/', async (req, res, next) => {
 
 
 
-router.put('/:id', async (req, res, next) => {
-  try {
-    const document = await Document.findOne({ id: req.params.id });
+router.put('/:id', (req, res, next) => {
+  Document.findOne({ id: req.params.id })
+    .then(document => {
+      document.name = req.body.name;
+      document.description = req.body.description;
+      document.url = req.body.url;
 
-    if (!document) {
-      return res.status(404).json({
-        message: "Document not found."
+      Document.updateOne({ id: req.params.id }, document)
+        .then(result => {
+          res.status(204).json({
+            message: 'Document updated successfully'
+          })
+        })
+        .catch(error => {
+           res.status(500).json({
+           message: 'An error occurred',
+           error: error
+         });
+        });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: 'Document not found.',
+        error: { document: 'Document not found'}
       });
-    }
-
-    document.name = req.body.name;
-    document.description = req.body.description;
-    document.url = req.body.url;
-
-    const result = await Document.updateOne({ id: req.params.id }, document);
-
-    if (result.nModified === 1) {
-      return res.status(204).json({
-        message: 'Document updated successfully'
-      });
-    } else {
-      return res.status(500).json({
-        message: 'An error occurred. Document could not be updated.'
-      });
-    }
-  } catch (error) {
-    return res.status(500).json({
-      message: 'An error occurred',
-      error: error
     });
-  }
 });
 
 
 // DELETE WORKS!!
 router.delete('/:id', (req, res, next) => {
-  const docId = req.params.id;
-
-  Document.findOneAndDelete({ id: docId }) // Changed documentModel to Document
-    .then(result => {
-      if (result) {
-        res.status(200).json({
-          message: "Document deleted successfully!"
+  Document.findOne({ id: req.params.id })
+    .then((doc) => {
+      Document.deleteOne({ id: req.params.id })
+        .then((result) => {
+          res.status(204).json({
+            message: "Document deleted successfully",
+          });
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: "There was a problem deleting the document.",
+            error: err,
+          });
         });
-      } else {
-        res.status(404).json({
-          message: "Document not found."
-        });
-      }
     })
-    .catch(error => {
-      res.status(500).json({
-        message: "An error occurred. Document could not be deleted.",
-        error: error
+    .catch((err) => {
+      res.status(404).json({
+        message: "Document not found.",
+        error: err,
       });
     });
 });
