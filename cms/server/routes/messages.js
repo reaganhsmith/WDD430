@@ -4,101 +4,66 @@ const sequenceGenerator = require('./sequenceGenerator');
 const Message = require('../models/message');
 
 
-router.get('/', (req, res, next) => {
-    Message.find().then((messages) => {
-        res.status(200).json({
-          message: "retrived messages from database!",
-          messages: messages
-        });
-      })
-      .catch((err) => {
-        res.status(500).json({
-          message: "OH NO! There was an error retrieving the messages data",
-          error: err
-        });
-      });
-  });
+// Route to get all documents
+router.get('/', async (req, res, next) => {
+  try {
+      const messages = await Message.find();
+
+      res.status(200).json(messages);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
   
   
-  router.post('/', (req, res, next) => {
-    const maxMessageId = sequenceGenerator.nextId("messages");
-  
+
+router.post('/', async (req, res, next) => {
+  try {
+    // Retrieve the next ID from the sequence generator
+    const maxCocumentId = await sequenceGenerator.nextId("contacts");
+
+    // Creating a new document object using the Document model
     const message = new Message({
       id: maxMessageId,
-      subject: req.body.name,
+      subject: req.body.subject,
       msgText: req.body.msgText,
       sender: req.body.sender
+  });
+
+    // Saving the new document to the database
+    const createdMessage = await message.save();
+
+    res.status(201).json({
+      message: 'Message added successfully',
+      document: createdDocument
     });
-    message.save()
-      .then(createdMessage => {
-        res.status(201).json({
-          message: "message added successfully! YAY",
-          message: createdMessage
-        });
-      }).catch(error => {
-        res.status(500).json({
-          message: "Error occured. message could not be added.",
-          error: error
-        });
-      });
-  });
-  
-  router.put('/:id', (req, res, next) => {
-  
-    const docId = req.params.id;
-  
-    Message.findOne({
-        docId
-      })
-      .then(message => {
-        message.subject = req.body.subject;
-        message.msgText = req.body.msgText;
-        message.sender = req.body.sender;
-  
-        Message.updateOne({
-          docId
-        }, message).then(result => {
-          res.status(204).json({
-            message: "message updated successfully! YAY"
-          })
-        }).catch(error => {
-          res.status(500).json({
-            message: "Error occured. message could not be updated.",
-            error: error
-          });
-        });
-      }).catch(error => {
-        res.status(500).json({
-          message: "Error occured. message could not be found.",
-          error: error
-        });
-      });
-  });
+  } catch (error) {
+    res.status(500).json({
+      message: 'An error occurred',
+      error: error.message
+    });
+  }
+});
   
   
   router.delete('/:id', (req, res, next) => {
+    const msgId = req.params.id;
   
-    const docId = req.params.id;
-  
-    Message.findOne({
-        docId
-      })
-      .then(message => {
-        Message.DeleteOne({
-          docId
-        }).then(result => {
-          res.status(204).json({
-            message: "message deleted successfully! NICE"
-          })
-        }).catch(error => {
-          res.status(500).json({
-            message: "An error occured. message could not be deleted.",
-            error: error
+    Message.findOneAndDelete({ id: msgId }) // Changed documentModel to Document
+      .then(result => {
+        if (result) {
+          res.status(200).json({
+            message: "Message deleted successfully!"
           });
-        });
-      }).catch(error => {
+        } else {
+          res.status(404).json({
+            message: "Message could not be deleted."
+          });
+        }
+      })
+      .catch(error => {
         res.status(500).json({
-          message: "An error occured. message could not be found.",
+          message: "An error occurred. Message could not be  found.",
           error: error
         });
       });
