@@ -1,6 +1,5 @@
 import { EventEmitter, Injectable, Output } from '@angular/core';
 import { Message } from './message.model';
-import { MOCKMESSAGES } from './MOCKMESSAGES';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
 
@@ -8,14 +7,20 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class MessageService {
-  messages: Message[] = [];
+  @Output() messageSelectedEvent = new EventEmitter<Message>();
   @Output() messageChangedEvent = new EventEmitter<Message[]>();
   messageListChangedEvent = new Subject<Message[]>();
   messagesUrl = "http://localhost:3000/messages";
+
+  messages: Message[] = [];
   maxMessageId: number;
+  messagesListClone: Message[];
+
 
   constructor(private httpClient: HttpClient) {
+    this.maxMessageId = this.getMaxId();
   }
+
 
   getMessages(): Message[] {
     this.httpClient
@@ -24,14 +29,14 @@ export class MessageService {
         this.messages = messages;
         this.maxMessageId = this.getMaxId();
         this.sortMessages();
-        this.messageChangedEvent.next(this.messages.slice());
+        this.messageListChangedEvent.next(this.messages.slice());
       });
 
     return this.messages.slice();
   }
 
   private sortMessages() {
-    this.messages.sort((a, b) => a.msgText.localeCompare(b.msgText));
+    this.messages.sort((a, b) => a.subject.localeCompare(b.subject));
   }
 
   storeMessages() {
@@ -41,30 +46,13 @@ export class MessageService {
       })
       .subscribe(() => {
         this.sortMessages;
-        this.messageChangedEvent.next(this.messages.slice());
+        this.messageListChangedEvent.next(this.messages.slice());
       });
   }
 
-  getMessage(id: string){
+
+  getMessage(id: string) {
     return this.messages[id];
-  }
-
-  addMessage(newMessage: Message) {
-    if (!newMessage) return;
-    newMessage.id = '';
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
-    this.httpClient
-      .post<{ message: string; messageObject: Message }>(
-        this.messagesUrl,
-        newMessage,
-        { headers: headers }).subscribe({
-          next: (res) => {
-            console.log(res.message);
-            this.messages.push(res.messageObject);
-            this.sortMessages();
-          }
-        })
   }
 
   getMaxId(): number {
@@ -78,6 +66,25 @@ export class MessageService {
     return maxId;
 
   }
+
+  addMessage(newMessage: Message) {
+    if (!newMessage) return;
+    newMessage.id = '';
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    this.httpClient
+      .post<{ message: string; msg: Message }>(
+        this.messagesUrl,
+        newMessage,
+        { headers: headers }).subscribe({
+          next: (res) => {
+            console.log(res.message);
+            this.messages.push(res.msg);
+            this.sortMessages();
+          }
+        })
+  }
+
 
 
 }

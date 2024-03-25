@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, OnInit, Output } from '@angular/core';
+import { EventEmitter, Injectable, Output } from '@angular/core';
 import { Contact } from './contact.model';
 import { Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -6,24 +6,22 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 @Injectable({
   providedIn: 'root',
 })
-export class ContactService implements OnInit {
+export class ContactService {
   @Output() contactSelectedEvent = new EventEmitter<Contact>();
   @Output() contactChangedEvent = new EventEmitter<Contact[]>();
   contactListChangedEvent = new Subject<Contact[]>();
   contactsUrl = "http://localhost:3000/contacts";
-  
 
   contacts: Contact[] = [];
   maxContactId: number;
-  contactsListClone: Contact[]
+  contactsListClone: Contact[];
 
-  constructor(private httpClient : HttpClient) {
-  }
-  ngOnInit(){
-
+  constructor(private httpClient: HttpClient) {
+    this.maxContactId = this.getMaxId();
   }
 
-  getContacts() {
+
+  getContacts(): Contact[] {
     this.httpClient
       .get<Contact[]>(this.contactsUrl)
       .subscribe((contacts: Contact[]) => {
@@ -36,31 +34,31 @@ export class ContactService implements OnInit {
     return this.contacts.slice();
   }
 
-  private sortContacts(){
+  private sortContacts() {
     this.contacts.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  storeContacts(){
+  storeContacts() {
     this.httpClient
-    .put(this.contactsUrl, JSON.stringify(this.contacts), {
-      headers: new HttpHeaders().set('Content-Type', 'application/json'),
-    })
-    .subscribe(() =>{
-      this.sortContacts;
-      this.contactListChangedEvent.next(this.contacts.slice());
-    }); 
+      .put(this.contactsUrl, JSON.stringify(this.contacts), {
+        headers: new HttpHeaders().set('Content-Type', 'application/json'),
+      })
+      .subscribe(() => {
+        this.sortContacts;
+        this.contactListChangedEvent.next(this.contacts.slice());
+      });
   }
 
 
-  getContact(id: string){
+  getContact(id: string) {
     return this.contacts[id];
   }
 
   getMaxId(): number {
     let maxId = 0;
-    for (let contact of this.contacts){
-      let currentId =+ maxId;
-      if(currentId > maxId){
+    for (let contact of this.contacts) {
+      let currentId = + maxId;
+      if (currentId > maxId) {
         maxId = currentId;
       }
     }
@@ -68,7 +66,7 @@ export class ContactService implements OnInit {
 
   }
 
-  addContact(newContact: Contact){
+  addContact(newContact: Contact) {
     if (!newContact) return;
     newContact.id = '';
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -84,24 +82,43 @@ export class ContactService implements OnInit {
             this.sortContacts();
           }
         })
+  }
+
+
+  updateContact(originalContact: Contact, newContact: Contact) {
+    // Check if originalDocument or newDocument is missing
+    if (!originalContact || !newContact) {
+      return;
+    }
+
+    // Find the position of the original document in the documents array
+    const pos = this.contacts.findIndex(d => d.id === originalContact.id);
+
+    // If original document not found, return
+    if (pos < 0) {
+      return;
+    }
+
+    // Set the id of the new Document to the id of the old Document
+    newContact.id = originalContact.id;
+
+    // Define headers for HTTP request
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+
+    // Update database by sending HTTP PUT request
+    this.httpClient.put(`${this.contactsUrl}/${newContact.id}`,
+      newContact, { headers: headers })
+      .subscribe(
+        (response: Response) => {
+          // If update successful, update local documents array
+          this.contacts[pos] = newContact;
+          // Sort and send documents
+          this.sortContacts();
+        }
+      );
       
   }
 
-
-  updateContact(originalContact: Contact, newContact: Contact){
-    if (!originalContact || !newContact){
-      return
-    }
-    let pos = this.contacts.indexOf(originalContact)
-    if (pos < 0 ){
-      return 
-    }
-
-    newContact.id = originalContact.id
-    this.contacts[pos] = newContact
-    this.storeContacts();
-    
-  }
 
   deleteContact(contact: Contact) {
     if (!contact) {

@@ -9,22 +9,22 @@ import { MessageService } from '../message.service';
   styleUrl: './message-edit.component.css'
 })
 export class MessageEditComponent {
-  @ViewChild('subjectInput') subInputRef: ElementRef;
-  @ViewChild('messageInput') mesInputRef: ElementRef;
-  @Output() messageSent = new EventEmitter<Message>();
-  currentSender: string = '0';
+  currentSender: string = '65fc895ad34307cca27715c5';
+  @Output() addMessageEvent = new EventEmitter<Message>();
+  @ViewChild('subject') subjectInputRef: ElementRef;
+  @ViewChild('msgText') msgTextInputRef: ElementRef;  
 
-  constructor(private messageService: MessageService){}
-
+  constructor(private messageService: MessageService) { }
   onSendMessage() {
-    const mesSubject = this.subInputRef.nativeElement.value;
-    const mesMessage = this.mesInputRef.nativeElement.value;
-    const newMessage = new Message("4", mesSubject, mesMessage, this.currentSender);
-    this.messageService.addMessage(newMessage)
+    const subjectValue = this.subjectInputRef.nativeElement.value;
+    const msgTextValue = this.msgTextInputRef.nativeElement.value;
+    const newMessage = new Message(null, subjectValue, msgTextValue, this.currentSender);
+    this.messageService.addMessage(newMessage);
   }
 
-  onClear(){
-      this.subInputRef.nativeElement.value = " ";
-      this.mesInputRef.nativeElement.value = " ";
+  onClear() {
+
+    this.subjectInputRef.nativeElement.value = '';
+    this.msgTextInputRef.nativeElement.value = '';
   }
 }

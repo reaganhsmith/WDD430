@@ -13,7 +13,8 @@
         <div class="col-sm-12 form-group">
           <label for="email">Email:</label>
           <input type="text" id="email" class="form-control required" size="120" max="255" name="email"
-            [ngModel]="contact?.email" required #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
+  [ngModel]="contact?.email" required #email="ngModel" 
+  pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,3}">
         </div>
       </div>
       <div class="alert alert-danger" *ngIf="email.invalid && email.touched">Enter a valid Email address</div>
