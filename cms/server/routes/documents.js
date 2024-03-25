@@ -6,11 +6,13 @@ const Document = require('../models/document'); // Changed documentModel to Docu
 // Route to get all documents
 router.get('/', async (req, res, next) => {
   try {
-      const documents = await Document.find(); // Changed contacts to documents to reflect the fetched data
+    const documents = await Document.find(); // Changed contacts to documents to reflect the fetched data
 
-      res.status(200).json(documents);
+    res.status(200).json(documents);
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message
+    });
   }
 });
 
@@ -48,29 +50,35 @@ router.post('/', async (req, res, next) => {
 
 
 router.put('/:id', (req, res, next) => {
-  Document.findOne({ id: req.params.id })
+  Document.findOne({
+      id: req.params.id
+    })
     .then(document => {
       document.name = req.body.name;
       document.description = req.body.description;
       document.url = req.body.url;
 
-      Document.updateOne({ id: req.params.id }, document)
+      Document.updateOne({
+          id: req.params.id
+        }, document)
         .then(result => {
           res.status(204).json({
             message: 'Document updated successfully'
           })
         })
         .catch(error => {
-           res.status(500).json({
-           message: 'An error occurred',
-           error: error
-         });
+          res.status(500).json({
+            message: 'An error occurred',
+            error: error
+          });
         });
     })
     .catch(error => {
-      res.status(500).json({
+      res.status(400).json({
         message: 'Document not found.',
-        error: { document: 'Document not found'}
+        error: {
+          document: 'Document not found'
+        }
       });
     });
 });
@@ -78,9 +86,13 @@ router.put('/:id', (req, res, next) => {
 
 // DELETE WORKS!!
 router.delete('/:id', (req, res, next) => {
-  Document.findOne({ id: req.params.id })
+  Document.findOne({
+      id: req.params.id
+    })
     .then((doc) => {
-      Document.deleteOne({ id: req.params.id })
+      Document.deleteOne({
+          id: req.params.id
+        })
         .then((result) => {
           res.status(204).json({
             message: "Document deleted successfully",

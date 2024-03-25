@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable, Output } from '@angular/core';
 import { Document } from './document.model';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 
@@ -103,7 +103,7 @@ export class DocumentService {
 
     // Set the id of the new Document to the id of the old Document
     newDocument.id = originalDocument.id;
-    newDocument._id = originalDocument._id;
+    // newDocument._id = originalDocument._id;
 
     // Define headers for HTTP request
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
