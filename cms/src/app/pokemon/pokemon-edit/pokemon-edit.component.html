@@ -1,0 +1,54 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form id="pokemon-edit" #f="ngForm" (ngSubmit)="onSubmit(f)">
+      <div class="row">
+        <div class="col-sm-12 form-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" class="form-control required" size="120" max="120" name="name"
+            [ngModel]="pokemon.name" required #name="ngModel">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12 form-group">
+          <label for="type">type:</label>
+          <input type="text" id="type" class="form-control required" size="120" max="255" name="type"
+            [ngModel]="pokemon.type" required #type="ngModel" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,3}">
+        </div>
+      </div>
+      <div class="alert alert-danger" *ngIf="type.invalid && type.touched">Enter a valid type address</div>
+
+      <div class="row">
+        <div class="col-sm-12 form-group">
+          <label for="color">color:</label>
+          <input type="text" id="color" class="form-control invalid" size="150" max="255" name="color"
+            [ngModel]="pokemon.color" #color="ngModel" pattern="\D*([2-9]\d{2})(\D*)([2-9]\d{2})(\D*)(\d{4})\D*">
+
+        </div>
+      </div>
+      <div class="alert alert-danger" *ngIf="color.invalid && color.touched">Enter a valid Pohne</div>
+
+      <div class="row">
+        <div class="col-sm-12 form-group">
+          <label for="img">Image URL:</label>
+          <input type="text" id="img" class="form-control" size="150" max="255" name="img"
+            [ngModel]="pokemon?.img" #img="ngModel">
+        </div>
+      </div>
+
+
+      <div class="alert alert-danger" *ngIf="name.invalid || type.invalid">
+        The Name and type fields are required.
+      </div>
+
+
+      <div class="row">
+        <div class="col-xs-12 btn-toolbar">
+          <button class="btn btn-success" type="submit" [disabled]="!f.valid">Save</button>
+          <button class="btn btn-primary" type="button" (click)="onCancel()">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

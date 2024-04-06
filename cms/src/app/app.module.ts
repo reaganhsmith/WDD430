@@ -24,6 +24,12 @@ import { ContactEditComponent } from './contacts/contact-edit/contact-edit.compo
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ContactsFilterPipe } from './contacts/contacts-filter.pipe'; 
 import { HttpClientModule } from '@angular/common/http';
+import { PokemonComponent } from './pokemon/pokemon.component';
+import { PokemonDetailsComponent } from './pokemon/pokemon-details/pokemon-details.component';
+import { PokemonEditComponent } from './pokemon/pokemon-edit/pokemon-edit.component';
+import { PokemonListComponent } from './pokemon/pokemon-list/pokemon-list.component';
+import { PokemonItemComponent } from './pokemon/pokemon-list/pokemon-item/pokemon-item.component';
+import { PokemonFilterPipe } from './pokemon/pokemon-filter.pipe';
 
 
 
@@ -48,6 +54,12 @@ import { HttpClientModule } from '@angular/common/http';
     DocumentEditComponent,
     ContactEditComponent,
     ContactsFilterPipe,
+    PokemonComponent,
+    PokemonDetailsComponent,
+    PokemonEditComponent,
+    PokemonListComponent,
+    PokemonItemComponent,
+    PokemonFilterPipe
   ],
   imports: [
     BrowserModule,

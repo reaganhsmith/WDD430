@@ -7,9 +7,11 @@ import { MessagesComponent } from './messages/messages.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { DocumentEditComponent } from './documents/document-edit/document-edit.component';
 import { DocumentDetailComponent } from './documents/document-detail/document-detail.component'; 
-import { ContactListComponent } from './contacts/contact-list/contact-list.component';
 import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
 import { ContactDetailComponent } from './contacts/contact-detail/contact-detail.component';
+import { PokemonComponent } from './pokemon/pokemon.component';
+import { PokemonEditComponent } from './pokemon/pokemon-edit/pokemon-edit.component';
+import { PokemonDetailsComponent } from './pokemon/pokemon-details/pokemon-details.component';
 
 
 const appRoutes: Routes = [
@@ -26,6 +28,11 @@ const appRoutes: Routes = [
         { path: 'new', component: ContactEditComponent },
         { path: ':id', component: ContactDetailComponent },
         { path: ':id/edit', component: ContactEditComponent }
+    ]},
+    { path: 'pokemon', component: PokemonComponent, children: [
+        { path: 'new', component: PokemonEditComponent },
+        { path: ':id', component: PokemonDetailsComponent },
+        { path: ':id/edit', component: PokemonEditComponent }
     ]}
 ];
 

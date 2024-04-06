@@ -1,0 +1,18 @@
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h2>{{ pokemon.name }}</h2>
+        <div class="row">
+            <div class="col-xs-12 center-block">
+                <img src="{{ pokemon.img }}" alt="{{ pokemon.name }}" class="pull-left img-responsive" style="max-width:8rem"> 
+                <div class="panel-body">
+                    <button class="pull-right btn btn-primary" style="margin: .5rem" routerLink="edit" >Edit</button>
+                    <button class="pull-right btn btn-danger" style="margin: .5rem" (click)="onDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+    <p><strong>Number: </strong>{{pokemon.id}}</p>
+    <p><strong>Type: </strong>{{pokemon.type}}</p>
+</div>
+</div>
