@@ -15,7 +15,7 @@ import { PokemonDetailsComponent } from './pokemon/pokemon-details/pokemon-detai
 
 
 const appRoutes: Routes = [
-    { path: '', redirectTo: '/documents', pathMatch: 'full'},
+    { path: '', redirectTo: '/pokemon', pathMatch: 'full'},
     { path: 'documents', component: DocumentsComponent, children: [
         { path: 'new', component: DocumentEditComponent },
         { path: ':id', component: DocumentDetailComponent },
